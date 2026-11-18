@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#pantalla {
+    width: 910px;
+    height: 910px;
+    margin: auto;
+    border: 5px solid black;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.casilla {
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#alimento {
+    width: 35px;
+    height: 35px;
+    background-color: black;
+    border-radius: 50%;
+}
+
+#snake {
+    width: 100%;
+    height: 35px;
+    background-color: black;
+}

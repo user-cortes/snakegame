@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">    
+    <title>Snake Juego</title>
+</head>
+<body>
+    <div id="pantalla">
+
+    </div>
+
+    <script>
+        //crear casillas
+        const casillas_totales = 100;
+        for (let i = 0; i < casillas_totales; i++) {
+            let celda = document.createElement('div');
+            celda.className = 'casilla';
+            celda.style.width = '90px';
+            celda.style.height = '90px';
+            document.getElementById('pantalla').append(celda);
+        }
+
+        //identificar casillas para tener control individual
+        let casilla_numero = 0;
+        for (const casilla of document.querySelectorAll('.casilla')) {
+            casilla.id = 'cn_' + casilla_numero++;
+        }
+
+        //generar la serpiente
+        let posicion_cabeza = 7;
+        let posicion_snake = [document.getElementById('cn_' + posicion_cabeza), document.getElementById('cn_8'), document.getElementById('cn_9')];
+        function dibujarSnake() {
+            //eliminar posicion anterior
+            for (const casilla of document.querySelectorAll('.casilla')) {
+                if (casilla.id === posicion_alimento) {
+                } else {
+                    casilla.innerHTML = '';
+                }
+            }
+
+            //dibujar la posicion actual 
+            for (const posicion of posicion_snake) {
+                let snake_body = document.createElement('div');
+                snake_body.id = 'snake';
+                posicion.append(snake_body);
+            }
+        }
+        
+        //generar la ubicacion del alimento al azar
+        let alimento = document.createElement('div')
+        let posicion_alimento = '';
+        alimento.id = 'alimento';
+        function reubicarAlimento(casillas_ocupadas) {
+            while (true) {
+                let numero_aleatorio = Math.floor(Math.random() * casillas_totales);
+                let casilla_aleatoria = 'cn_' + numero_aleatorio;
+                if (!casillas_ocupadas.includes(document.getElementById(casilla_aleatoria))) {
+                    document.getElementById(casilla_aleatoria).append(alimento);
+                    posicion_alimento = casilla_aleatoria;
+                    break;
+                } else {
+                    console.log('casilla ocupada, buscando otra casilla para generar el alimento...')
+                }
+            }
+        }
+        
+        //movimiento de la serpiente
+        let pos_izquierda = -1;
+        let pos_derecha = +1;
+        let pos_arriba = -10;
+        let pos_abajo = +10;
+
+        function moverSnake () {
+            let direccion; //funcion que devuelva el pos_direccion en base a la tecla
+            let avanzar = document.getElementById('cn_' + (posicion_cabeza + direccion));
+            posicion_snake.unshift(avanzar);
+            posicion_snake.pop();
+        }
+
+        reubicarAlimento(posicion_snake);
+        dibujarSnake();
+    </script>
+</body>
+</html>
