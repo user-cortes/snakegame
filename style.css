@@ -7,28 +7,26 @@
 #pantalla {
     width: 910px;
     height: 910px;
-    margin: auto;
+    margin: 2rem auto;
     border: 5px solid black;
     display: flex;
     flex-wrap: wrap;
 }
 
 .casilla {
-    border: 1px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 #alimento {
-    width: 35px;
-    height: 35px;
-    background-color: black;
-    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: red;
 }
 
 #snake {
-    width: 100%;
-    height: 35px;
-    background-color: black;
+    width: 20px;
+    height: 20px;
+    background-color: green;
 }

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">    
+    <link rel="stylesheet" href="style.css">
     <title>Snake Juego</title>
 </head>
+
 <body>
     <div id="pantalla">
 
@@ -13,12 +15,12 @@
 
     <script>
         //crear casillas
-        const casillas_totales = 100;
+        const casillas_totales = 2025;
         for (let i = 0; i < casillas_totales; i++) {
             let celda = document.createElement('div');
             celda.className = 'casilla';
-            celda.style.width = '90px';
-            celda.style.height = '90px';
+            celda.style.width = '20px';
+            celda.style.height = '20px';
             document.getElementById('pantalla').append(celda);
         }
 
@@ -47,7 +49,7 @@
                 posicion.append(snake_body);
             }
         }
-        
+
         //generar la ubicacion del alimento al azar
         let alimento = document.createElement('div')
         let posicion_alimento = '';
@@ -65,22 +67,51 @@
                 }
             }
         }
-        
+
         //movimiento de la serpiente
         let pos_izquierda = -1;
         let pos_derecha = +1;
-        let pos_arriba = -10;
-        let pos_abajo = +10;
+        let pos_arriba = -45;
+        let pos_abajo = +45;
 
-        function moverSnake () {
-            let direccion; //funcion que devuelva el pos_direccion en base a la tecla
+        let direccion = pos_izquierda
+
+        document.addEventListener('keydown', function (event) {
+            switch (event.key) {
+                case 'ArrowLeft':
+                    direccion = pos_izquierda;
+                    break;
+
+                case 'ArrowRight':
+                    direccion = pos_derecha;
+                    break;
+
+                case 'ArrowUp':
+                    direccion = pos_arriba;
+                    break;
+
+                case 'ArrowDown':
+                    direccion = pos_abajo;
+                    break;
+            }
+        });
+
+        function moverSnake() {
             let avanzar = document.getElementById('cn_' + (posicion_cabeza + direccion));
             posicion_snake.unshift(avanzar);
             posicion_snake.pop();
+            posicion_cabeza += direccion;
+
+            if (posicion_cabeza === posicion_alimento) {
+                reubicarAlimento(posicion_snake);
+            }
+            dibujarSnake();
         }
 
         reubicarAlimento(posicion_snake);
         dibujarSnake();
+        setInterval(moverSnake, 90);
     </script>
 </body>
+
 </html>
