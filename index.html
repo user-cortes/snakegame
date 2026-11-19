@@ -5,12 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/e87d10dd99.js" crossorigin="anonymous"></script>
     <title>Snake Juego</title>
 </head>
 
 <body>
     <div id="pantalla">
-
+        <div id="pantalla-inicio">
+            <div>
+                <p>INICIAR JUEGO</p>
+                <button id="btn_play"><span class="fa-solid fa-play"></span></button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -31,8 +37,8 @@
         }
 
         //generar la serpiente
-        let posicion_cabeza = 7;
-        let posicion_snake = [document.getElementById('cn_' + posicion_cabeza), document.getElementById('cn_8'), document.getElementById('cn_9')];
+        let posicion_cabeza = 130;
+        let posicion_snake = [document.getElementById('cn_' + posicion_cabeza), document.getElementById('cn_131'), document.getElementById('cn_132')];
         function dibujarSnake() {
             //eliminar posicion anterior
             for (const casilla of document.querySelectorAll('.casilla')) {
@@ -59,7 +65,7 @@
             do {
                 let numero_aleatorio = Math.floor(Math.random() * casillas_totales);
                 casilla_aleatoria = 'cn_' + numero_aleatorio;
-            } while (casillas_ocupadas.includes(document.getElementById(casilla_aleatoria)))
+            } while (casillas_ocupadas.includes(document.getElementById(casilla_aleatoria)) || bordes.includes(document.getElementById(casilla_aleatoria)))
 
             document.getElementById(casilla_aleatoria).append(alimento);
             if (velocidad > 30) {
@@ -83,7 +89,7 @@
             switch (event.key) {
                 case 'ArrowLeft':
                     if (direccion == pos_derecha) {
-                        console.log('no puedes ir en esa direccion');
+                        console.log('no puedes ir hacia la derecha');
                         break;
                     }
                     direccion = pos_izquierda;
@@ -91,7 +97,7 @@
 
                 case 'ArrowRight':
                     if (direccion == pos_izquierda) {
-                        console.log('no puedes ir en esa direccion');
+                        console.log('no puedes ir hacia la izquierda');
                         break;
                     }
                     direccion = pos_derecha;
@@ -99,7 +105,7 @@
 
                 case 'ArrowUp':
                     if (direccion == pos_abajo) {
-                        console.log('no puedes ir en esa direccion');
+                        console.log('no puedes ir hacia arriba');
                         break;
                     }
                     direccion = pos_arriba;
@@ -107,17 +113,19 @@
 
                 case 'ArrowDown':
                     if (direccion == pos_arriba) {
-                        console.log('no puedes ir en esa direccion');
+                        console.log('no puedes ir hacia abajo');
                         break;
                     }
                     direccion = pos_abajo;
                     break;
             }
+            console.log(event.key);
         });
 
         function moverSnake() {
             autoComerse();
-            if (!seChoco) {
+            contraLaPared();
+            if (!stopGame) {
                 let avanzar = document.getElementById('cn_' + (posicion_cabeza + direccion));
                 posicion_snake.unshift(avanzar);
                 posicion_cabeza += direccion;
@@ -128,7 +136,6 @@
                     posicion_snake.pop();
                 }
                 dibujarSnake();
-                console.log(posicion_snake);
             }
         }
         function ajustarVelocidad() {
@@ -136,23 +143,15 @@
             movimiento = setInterval(moverSnake, velocidad);
         }
 
-        reubicarAlimento(posicion_snake);
-        dibujarSnake();
-        ajustarVelocidad();
-
+        
         //colisiones
-        let seChoco = false;
+        let stopGame = true;
         let bordes = [];
-
-        let borde_left = [];
-        let borde_right = [];
-        let borde_up = [];
-        let borde_down = [];
-
+        
         function autoComerse() {
             for (let i = 1; i < posicion_snake.length; i++) {
                 if (document.getElementById('cn_' + posicion_cabeza) == posicion_snake[i]) {
-                    seChoco = true;
+                    stopGame = true;
                     break;
                 }
             }
@@ -160,21 +159,48 @@
         function generarBordes() {
             //borde superior
             for (let i = 0; i < 45; i++) {
-
+                let borde = document.getElementById('cn_' + i);
+                borde.classList.add('borde-tablero');
+                bordes.push(borde);
             }
             //borde izquierdo
-            for (let i = 0; i < 1981; i + 45) {
-
+            for (let i = 0; i < 1981; i += 45) {
+                let borde = document.getElementById('cn_' + i);
+                borde.classList.add('borde-tablero');
+                bordes.push(borde);
             }
             //borde inferior
             for (let i = 1980; i < 2025; i++) {
-
+                let borde = document.getElementById('cn_' + i);
+                borde.classList.add('borde-tablero');
+                bordes.push(borde);
             }
             //borde derecho
-            for (let i = 44; i < 2025; i++) {
-
+            for (let i = 44; i < 2025; i += 45) {
+                let borde = document.getElementById('cn_' + i);
+                borde.classList.add('borde-tablero');
+                bordes.push(borde);
             }
         }
+        
+        function contraLaPared() {
+            for (const borde of bordes) {
+                if (document.getElementById('cn_' + posicion_cabeza) == borde) {
+                    stopGame = true;
+                }
+            }
+        }
+        
+        //iniciar juego
+        function iniciarJuego() {
+            stopGame = false;
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            generarBordes();
+            reubicarAlimento(posicion_snake);
+            dibujarSnake();
+            ajustarVelocidad();
+        }
+        document.getElementById('btn_play').onclick = iniciarJuego;
     </script>
 </body>
 
