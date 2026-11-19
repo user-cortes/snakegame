@@ -11,10 +11,18 @@
 
 <body>
     <div id="pantalla">
-        <div id="pantalla-inicio">
+        <div id="pantalla-inicio" class="salva-pantalla">
             <div>
                 <p>INICIAR JUEGO</p>
                 <button id="btn_play"><span class="fa-solid fa-play"></span></button>
+            </div>
+        </div>
+
+        <div id="pantalla-gameover" class="salva-pantalla">
+            <div>
+                <p>GAME OVER</p>
+                <p class="puntuacion">puntuación: <span id="puntaje">0</span></p>
+                <button id="btn_return"><span class="fa-solid fa-arrow-rotate-left"></span></button>
             </div>
         </div>
     </div>
@@ -57,9 +65,11 @@
         }
 
         //generar la ubicacion del alimento al azar
+        let puntuacion = 0;
         let alimento = document.createElement('div')
         let posicion_alimento = '';
         alimento.id = 'alimento';
+
         function reubicarAlimento(casillas_ocupadas) {
             let casilla_aleatoria = '';
             do {
@@ -77,7 +87,7 @@
 
         //movimiento de la serpiente
         let velocidad = 105;
-        let movimiento = setInterval(moverSnake, velocidad);
+        let movimiento;
         let pos_izquierda = -1;
         let pos_derecha = +1;
         let pos_arriba = -45;
@@ -86,13 +96,17 @@
         let direccion = pos_izquierda
 
         document.addEventListener('keydown', function (event) {
+            let actual_posicion_cabeza = document.getElementById('cn_' + posicion_cabeza);
+
             switch (event.key) {
                 case 'ArrowLeft':
                     if (direccion == pos_derecha) {
                         console.log('no puedes ir hacia la derecha');
                         break;
                     }
-                    direccion = pos_izquierda;
+                    if (actual_posicion_cabeza != document.getElementById('cn_' + (posicion_cabeza + pos_izquierda))) {
+                        direccion = pos_izquierda;
+                    }
                     break;
 
                 case 'ArrowRight':
@@ -100,7 +114,9 @@
                         console.log('no puedes ir hacia la izquierda');
                         break;
                     }
-                    direccion = pos_derecha;
+                    if (actual_posicion_cabeza != document.getElementById('cn_' + (posicion_cabeza + pos_derecha))) {
+                        direccion = pos_derecha;
+                    }
                     break;
 
                 case 'ArrowUp':
@@ -108,7 +124,9 @@
                         console.log('no puedes ir hacia arriba');
                         break;
                     }
-                    direccion = pos_arriba;
+                    if (actual_posicion_cabeza != document.getElementById('cn_' + (posicion_cabeza + pos_arriba))) {
+                        direccion = pos_arriba;
+                    }
                     break;
 
                 case 'ArrowDown':
@@ -116,7 +134,9 @@
                         console.log('no puedes ir hacia abajo');
                         break;
                     }
-                    direccion = pos_abajo;
+                    if (actual_posicion_cabeza != document.getElementById('cn_' + (posicion_cabeza + pos_izquierda))) {
+                        direccion = pos_abajo;
+                    }
                     break;
             }
             console.log(event.key);
@@ -125,17 +145,23 @@
         function moverSnake() {
             autoComerse();
             contraLaPared();
-            if (!stopGame) {
+            if (!gameOver) {
                 let avanzar = document.getElementById('cn_' + (posicion_cabeza + direccion));
                 posicion_snake.unshift(avanzar);
                 posicion_cabeza += direccion;
 
                 if ('cn_' + posicion_cabeza === posicion_alimento) {
                     reubicarAlimento(posicion_snake);
+                    puntuacion++
+                    document.getElementById('puntaje').textContent = puntuacion;
                 } else {
                     posicion_snake.pop();
                 }
                 dibujarSnake();
+            } else {
+                console.log('gamer over')
+                document.getElementById('pantalla-gameover').style.display = 'flex';
+                document.getElementById('puntaje').textContent = puntuacion;
             }
         }
         function ajustarVelocidad() {
@@ -143,15 +169,15 @@
             movimiento = setInterval(moverSnake, velocidad);
         }
 
-        
+
         //colisiones
-        let stopGame = true;
+        let gameOver = true;
         let bordes = [];
-        
+
         function autoComerse() {
             for (let i = 1; i < posicion_snake.length; i++) {
                 if (document.getElementById('cn_' + posicion_cabeza) == posicion_snake[i]) {
-                    stopGame = true;
+                    gameOver = true;
                     break;
                 }
             }
@@ -182,25 +208,39 @@
                 bordes.push(borde);
             }
         }
-        
+
         function contraLaPared() {
             for (const borde of bordes) {
                 if (document.getElementById('cn_' + posicion_cabeza) == borde) {
-                    stopGame = true;
+                    gameOver = true;
                 }
             }
         }
-        
+
         //iniciar juego
         function iniciarJuego() {
-            stopGame = false;
+            gameOver = false;
             document.getElementById('pantalla-inicio').style.display = 'none';
             generarBordes();
             reubicarAlimento(posicion_snake);
             dibujarSnake();
             ajustarVelocidad();
         }
+        
+        //reiniciar
+        function reiniciar() {
+            posicion_cabeza = 130;
+            posicion_snake = [document.getElementById('cn_' + posicion_cabeza), document.getElementById('cn_131'), document.getElementById('cn_132')];
+            puntuacion = 0;
+            velocidad = 105;
+            direccion = pos_izquierda;
+            document.getElementById('pantalla-gameover').style.display = 'none'
+
+            iniciarJuego();
+        }
+
         document.getElementById('btn_play').onclick = iniciarJuego;
+        document.getElementById('btn_return').onclick = reiniciar;
     </script>
 </body>
 
