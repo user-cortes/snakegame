@@ -62,7 +62,9 @@
             } while (casillas_ocupadas.includes(document.getElementById(casilla_aleatoria)))
 
             document.getElementById(casilla_aleatoria).append(alimento);
-            velocidad -= 5;
+            if (velocidad > 30) {
+                velocidad -= 5;
+            }
             ajustarVelocidad();
             posicion_alimento = casilla_aleatoria;
         }
