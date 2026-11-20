@@ -28,6 +28,10 @@
     </div>
 
     <script>
+        //sonidos
+        let sonido_comer = new Audio('sounds/puntuar.wav');
+        let sonido_choque = new Audio('sounds/choque_sound.wav')
+
         //crear casillas
         const casillas_totales = 2025;
         for (let i = 0; i < casillas_totales; i++) {
@@ -92,21 +96,18 @@
         let pos_derecha = +1;
         let pos_arriba = -45;
         let pos_abajo = +45;
-
+        let enProceso = false;
         let direccion = pos_izquierda
 
         document.addEventListener('keydown', function (event) {
-            let actual_posicion_cabeza = document.getElementById('cn_' + posicion_cabeza);
-
+            let flechas = '';
             switch (event.key) {
                 case 'ArrowLeft':
                     if (direccion == pos_derecha) {
                         console.log('no puedes ir hacia la derecha');
                         break;
                     }
-                    if (actual_posicion_cabeza !== document.getElementById('cn_' + (posicion_cabeza + pos_izquierda))) {
-                        direccion = pos_izquierda;
-                    }
+                    setTimeout(() => { direccion = pos_izquierda; }, 50)
                     break;
 
                 case 'ArrowRight':
@@ -114,9 +115,7 @@
                         console.log('no puedes ir hacia la izquierda');
                         break;
                     }
-                    if (actual_posicion_cabeza !== document.getElementById('cn_' + (posicion_cabeza + pos_derecha))) {
-                        direccion = pos_derecha;
-                    }
+                    setTimeout(() => { direccion = pos_derecha; }, 50)
                     break;
 
                 case 'ArrowUp':
@@ -124,9 +123,7 @@
                         console.log('no puedes ir hacia arriba');
                         break;
                     }
-                    if (actual_posicion_cabeza !== document.getElementById('cn_' + (posicion_cabeza + pos_arriba))) {
-                        direccion = pos_arriba;
-                    }
+                    setTimeout(() => { direccion = pos_arriba; }, 50)
                     break;
 
                 case 'ArrowDown':
@@ -134,12 +131,9 @@
                         console.log('no puedes ir hacia abajo');
                         break;
                     }
-                    if (actual_posicion_cabeza !== document.getElementById('cn_' + (posicion_cabeza + pos_izquierda))) {
-                        direccion = pos_abajo;
-                    }
+                    setTimeout(() => { direccion = pos_abajo; }, 50)
                     break;
             }
-            console.log(event.key);
         });
 
         function moverSnake() {
@@ -152,6 +146,8 @@
 
                 if ('cn_' + posicion_cabeza === posicion_alimento) {
                     reubicarAlimento(posicion_snake);
+                    sonido_comer.currentTime = 0;
+                    sonido_comer.play();
                     puntuacion++
                     document.getElementById('puntaje').textContent = puntuacion;
                 } else {
@@ -159,6 +155,9 @@
                 }
                 dibujarSnake();
             } else {
+                clearInterval(movimiento);
+                sonido_choque.currentTime = 0;
+                sonido_choque.play();
                 console.log('gamer over')
                 document.getElementById('pantalla-gameover').style.display = 'flex';
                 document.getElementById('puntaje').textContent = puntuacion;
@@ -226,7 +225,7 @@
             dibujarSnake();
             ajustarVelocidad();
         }
-        
+
         //reiniciar
         function reiniciar() {
             posicion_cabeza = 130;

@@ -19,6 +19,8 @@ body {
     position: relative;
     background-color: rgb(129, 124, 94);
     box-shadow: inset 0px 0px 300px rgb(100, 100, 54);
+    
+    zoom: min(1, calc(100vw / 904px));
 }
 
 .casilla {
